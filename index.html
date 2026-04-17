@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Document Similarity Analyzer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand-row">
+      <div class="brand-logo">Document Similarity Analyzer</div>
+      <span class="brand-tag">Document Similarity Analyzer</span>
+    </div>
+    <nav class="top-nav">
+      <a href="#overview">Overview</a>
+      <a href="#analysis">Analysis</a>
+      <a href="#report">Report</a>
+    </nav>
+    <div class="header-actions">
+      <button id="toggleTheme" class="theme-toggle">Light mode</button>
+      <span id="liveStatus" class="live-status">Live collaboration offline</span>
+      <span id="serverStatus" class="server-status">Start the backend with npm start and open the app from the served localhost page.</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="overview">
+      <div class="hero-copy">
+        <p class="eyebrow">Document similarity analysis aligned with DAA syllabus topics and proven algorithm paradigms</p>
+        <h1>Text Comparison, Plagiarism Detection, and Algorithm Insight</h1>
+        <p class="hero-text">Upload documents, compare sources, visualize syllabus-relevant algorithm strategies, and export a polished report.</p>
+        <div class="pill-row">
+          <span class="pill">Dynamic Programming <strong>O(n × m)</strong></span>
+          <span class="pill">Divide &amp; Conquer <strong>O(n log n)</strong></span>
+          <span class="pill">Greedy Method <strong>O(n)</strong></span>
+          <span class="pill">Backtracking <strong>O(2^n)</strong></span>
+          <span class="pill">Branch &amp; Bound <strong>O(2^n)</strong></span>
+        </div>
+        <div class="upload-row">
+          <span id="uploadStatus">Use the uploads next to each document to load content.</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="card-header">Multi-document workspace</div>
+          <div class="doc-inline">
+            <span>Primary compare words: <strong id="countA">0</strong></span>
+            <span>Secondary compare words: <strong id="countB">0</strong></span>
+          </div>
+          <div class="editor-panes">
+            <div class="editor-block">
+              <div class="editor-header">
+                <label>Document 1</label>
+                <label class="file-button small">Upload
+                  <input type="file" class="doc-upload-input" data-doc="0" accept=".pdf,.docx,.txt" />
+                </label>
+              </div>
+              <textarea id="doc1" placeholder="Paste first document here...">The quick brown fox jumps over the lazy dog.</textarea>
+            </div>
+            <div class="editor-block">
+              <div class="editor-header">
+                <label>Document 2</label>
+                <label class="file-button small">Upload
+                  <input type="file" class="doc-upload-input" data-doc="1" accept=".pdf,.docx,.txt" />
+                </label>
+              </div>
+              <textarea id="doc2" placeholder="Paste second document here...">A quick brown fox leaped over a sleepy dog.</textarea>
+            </div>
+            <!-- Removed document 3, 4, and 5 as requested -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="analysis-panel" id="analysis">
+      <div class="controls-grid">
+        <div class="panel card algorithm-panel">
+          <div class="panel-title">Algorithm Selector</div>
+          <select id="algorithmSelect">
+            <option value="dynamic-programming">Dynamic Programming</option>
+            <option value="divide-conquer">Divide &amp; Conquer</option>
+            <option value="greedy">Greedy Method</option>
+            <option value="backtracking">Backtracking</option>
+            <option value="branch-and-bound">Branch &amp; Bound</option>
+          </select>
+          <div class="algorithm-description" id="algorithmDescription"></div>
+          <div class="complexity-block"><span>Complexity</span><strong id="algorithmComplexity"></strong></div>
+          <div class="algorithm-controls">
+            <label><input type="checkbox" id="raceToggle" /> Algorithm race mode</label>
+            <label>2/3-gram analysis<select id="ngramSelect"><option value="2">2-gram</option><option value="3">3-gram</option></select></label>
+          </div>
+        </div>
+
+        <div class="panel card verdict-panel">
+          <div class="panel-title">Verdict Banner</div>
+          <div id="verdictBanner" class="verdict-banner neutral">
+            <h2 id="verdictTitle">Ready to analyze</h2>
+            <p id="verdictSubtitle">Choose an algorithm and compare multiple documents to reveal similarity structure.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pipeline-card card">
+        <div class="panel-title">Processing Pipeline</div>
+        <div class="pipeline">
+          <div class="pipeline-step active"><span>1</span><strong>Upload</strong></div>
+          <div class="pipeline-step"><span>2</span><strong>Tokenize</strong></div>
+          <div class="pipeline-step"><span>3</span><strong>Normalize</strong></div>
+          <div class="pipeline-step"><span>4</span><strong>Algorithm</strong></div>
+          <div class="pipeline-step"><span>5</span><strong>Score</strong></div>
+          <div class="pipeline-step"><span>6</span><strong>Report</strong></div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card"><span>Similarity</span><strong id="metricSimilarity">0%</strong></div>
+        <div class="metric-card"><span>Document A words</span><strong id="metricWordsA">0</strong></div>
+        <div class="metric-card"><span>Document B words</span><strong id="metricWordsB">0</strong></div>
+        <div class="metric-card"><span>Shared terms</span><strong id="metricShared">0</strong></div>
+        <div class="metric-card gauge-card"><span>Similarity gauge</span><div class="gauge" id="gaugeFill"><div class="gauge-center" id="gaugeValue">0%</div></div></div>
+      </div>
+
+      <div class="algorithm-card card">
+        <div class="panel-title">Algorithm score breakdown</div>
+        <div class="algorithm-bars">
+          <div class="algorithm-bar-row"><strong>Dynamic Programming</strong><div class="bar-container"><div id="barDynamicProgramming" class="algorithm-bar"></div></div><span id="barDynamicProgrammingLabel">0%</span></div>
+          <div class="algorithm-bar-row"><strong>Divide &amp; Conquer</strong><div class="bar-container"><div id="barDivideConquer" class="algorithm-bar"></div></div><span id="barDivideConquerLabel">0%</span></div>
+          <div class="algorithm-bar-row"><strong>Greedy Method</strong><div class="bar-container"><div id="barGreedy" class="algorithm-bar"></div></div><span id="barGreedyLabel">0%</span></div>
+          <div class="algorithm-bar-row"><strong>Backtracking</strong><div class="bar-container"><div id="barBacktracking" class="algorithm-bar"></div></div><span id="barBacktrackingLabel">0%</span></div>
+          <div class="algorithm-bar-row"><strong>Branch &amp; Bound</strong><div class="bar-container"><div id="barBranchAndBound" class="algorithm-bar"></div></div><span id="barBranchAndBoundLabel">0%</span></div>
+        </div>
+      </div>
+
+      <div class="race-card card">
+        <div class="panel-title">Algorithm race mode</div>
+        <div class="race-grid">
+          <div class="race-row"><strong>Dynamic Programming</strong><div class="race-bar"><div id="racedynamicprogramming" class="race-fill"></div></div><span class="race-label">waiting...</span></div>
+          <div class="race-row"><strong>Divide &amp; Conquer</strong><div class="race-bar"><div id="racedivideconquer" class="race-fill"></div></div><span class="race-label">waiting...</span></div>
+          <div class="race-row"><strong>Greedy Method</strong><div class="race-bar"><div id="racegreedy" class="race-fill"></div></div><span class="race-label">waiting...</span></div>
+          <div class="race-row"><strong>Backtracking</strong><div class="race-bar"><div id="racebacktracking" class="race-fill"></div></div><span class="race-label">waiting...</span></div>
+          <div class="race-row"><strong>Branch &amp; Bound</strong><div class="race-bar"><div id="racebranchandbound" class="race-fill"></div></div><span class="race-label">waiting...</span></div>
+        </div>
+        <p id="raceStatus" class="race-status">Enable algorithm race mode to animate complexity differences.</p>
+      </div>
+
+      <div class="matrix-card card">
+        <div class="panel-title">Document similarity matrix</div>
+        <div id="matrixTable" class="matrix-table-wrapper">Enter two or more documents to generate a heatmap matrix.</div>
+      </div>
+
+      <div class="sentence-card card">
+        <div class="panel-title">Sentence-level breakdown</div>
+        <table class="sentence-table">
+          <thead><tr><th>Sentence A</th><th>Best matching sentence B</th><th>Score</th></tr></thead>
+          <tbody id="sentenceTable"><tr><td colspan="3">Sentence-level analysis appears here once documents are compared.</td></tr></tbody>
+        </table>
+      </div>
+
+      <div class="visualizer-card card">
+        <div class="panel-title">Algorithm visualizer</div>
+        <div class="visualizer-controls">
+          <label>Mode<select id="visualizerMode"><option value="dynamic-programming">Dynamic Programming</option><option value="divide-conquer">Divide &amp; Conquer</option><option value="greedy">Greedy Method</option><option value="backtracking">Backtracking</option><option value="branch-and-bound">Branch &amp; Bound</option></select></label>
+          <div class="visualizer-step-buttons"><button id="visualizerPrev">Prev</button><button id="visualizerNext">Next</button><button id="visualizerReset">Reset</button></div>
+          <div class="step-counter" id="stepCounter">0 / 0</div>
+        </div>
+        <p id="visualizerDescription" class="visualizer-description">Use the visualizer to step through algorithm internals.</p>
+        <div id="visualizerOutput" class="visualizer-output"></div>
+      </div>
+
+      <div class="highlight-card card" id="reportCard">
+        <div class="panel-title">Matched text preview</div>
+        <div class="highlight-grid">
+          <div>
+            <h3>Document A</h3>
+            <div class="highlight-text" id="highlightA"></div>
+          </div>
+          <div>
+            <h3>Document B</h3>
+            <div class="highlight-text" id="highlightB"></div>
+          </div>
+        </div>
+        <div class="ngram-summary" id="ngramSummary"></div>
+      </div>
+
+      <div class="report-card card">
+        <div class="panel-title">AI analysis report</div>
+        <p id="aiReport">Enter content and compare documents to generate a report summary. Download it as PDF when ready.</p>
+        <div class="report-actions">
+          <button id="downloadReport">Download PDF report</button>
+          <button id="clearHistory" class="secondary">Clear history</button>
+        </div>
+      </div>
+
+      <div class="history-card card">
+        <div class="panel-title">Similarity history</div>
+        <ul id="historyList"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Designed for DAA viva: Dynamic Programming, Divide &amp; Conquer, Greedy Method, Backtracking, Branch &amp; Bound, responsive layout, file upload, timeline history, and report export.</p>
+  </footer>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
